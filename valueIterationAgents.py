@@ -52,8 +52,10 @@ class ValueIterationAgent(ValueEstimationAgent):
         #find best at end
         #self.values stores reference to future states?
         for i in range(iterations):
+            self.newCounter = util.Counter()
             for state in self.mdp.getStates():
                 self.valueIterationHelper(state)
+            self.values = self.newCounter
 
 
     # calculate just the path given info
@@ -75,7 +77,7 @@ class ValueIterationAgent(ValueEstimationAgent):
                 V += reward
             if V>max or max == None:
                 max = V
-        self.values[state] = max
+        self.newCounter[state] = max
 
 
 
@@ -116,6 +118,8 @@ class ValueIterationAgent(ValueEstimationAgent):
         for a in self.mdp.getPossibleActions(state):
             V = 0
             probs = self.mdp.getTransitionStatesAndProbs(state,a)
+            if len(probs) < 1:
+                return None
             for index in range(len(probs)):
                 reward = probs[index][1]*(self.mdp.getReward(state,a,probs[index][0])+self.discount*self.values[probs[index][0]])
                 V += reward
