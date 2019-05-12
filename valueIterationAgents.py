@@ -51,25 +51,33 @@ class ValueIterationAgent(ValueEstimationAgent):
         #going to recurse down
         #find best at end
         #self.values stores reference to future states?
-        self.valueIterationHelper(self.mdp.getStartState(),0)
+        for i in range(iterations):
+            for state in self.mdp.getStates():
+                self.valueIterationHelper(state)
+
+
+    # calculate just the path given info
+    #put into new counter
 
 
 
-
-    def valueIterationHelper(self,state,completedIterations):
-        if completedIterations == self.iterations or self.mdp.isTerminal(state):
-            return 0
+    def valueIterationHelper(self, state):
+        if self.mdp.isTerminal(state):
+            return
         max = None
         for a in self.mdp.getPossibleActions(state):
             probs = self.mdp.getTransitionStatesAndProbs(state,a)
             V=0
             for key in range(len(probs)):
-                self.valueIterationHelper(probs[key][0], completedIterations + 1)
+                print(probs[key][1])
+                print(probs[key][0])
                 reward = probs[key][1]*(self.mdp.getReward(state,a,probs[key][0])+self.discount*self.values[probs[key][0]])
                 V += reward
             if V>max or max == None:
                 max = V
         self.values[state] = max
+
+
 
 
 
@@ -110,7 +118,6 @@ class ValueIterationAgent(ValueEstimationAgent):
             V = 0
             probs = self.mdp.getTransitionStatesAndProbs(state,a)
             for index in range(len(probs)):
-                print(index)
                 reward = probs[index][1]*(self.mdp.getReward(state,a,probs[index][0])+self.discount*self.values[probs[index][0]])
                 V += reward
             actions[a]=V
