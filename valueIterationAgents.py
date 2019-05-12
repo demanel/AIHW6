@@ -45,6 +45,32 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
+        #Pseudocode:
+        #V*(s)=max a of T(s,a,s')*(R(s,a,s')+gamma*V*(s'))
+        #for action in a, calculate V*
+        #going to recurse down
+        #find best at end
+        #self.values stores reference to future states?
+        self.valueIterationHelper(self.mdp.getStartState(),0)
+
+
+
+    def valueIterationHelper(self,state,completedIterations):
+        if completedIterations == self.iterations or self.mdp.isTerminal(state):
+            return 0
+        max = None
+        print(self.mdp.getPossibleActions(state))
+        for a in self.mdp.getPossibleActions(state):
+            probs = self.mdp.getTransitionStatesAndProbs(state,a)
+            V=0
+            for key in range(len(probs)):
+                self.valueIterationHelper(probs[key][0], completedIterations + 1)
+                reward = probs[key][1]*(self.mdp.getReward(state,a,probs[key][0])+self.discount*self.values[probs[key][0]])
+                V += reward
+            if V>max or max == None:
+                max = V
+        self.values[state] = max
+
 
 
     def getValue(self, state):
@@ -60,7 +86,14 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        Q=0
+        probs = self.mdp.getTransitionStatesAndProbs(state,a)
+        for index in len(probs):
+            self.valueIterationHelper(probs[i][0], completedIterations+1)
+            reward = probs[index][1](self.mdp.getReward(state,a,probs[index][0])+self.discount*self.values[probs[index][0]])
+            Q += reward
+        return Q
+
 
     def computeActionFromValues(self, state):
         """
@@ -72,7 +105,15 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        actions = util.Counter()
+        for a in self.mdp.getPossibleActions(state):
+            V = 0
+            for index in self.mdp.getTransitionStatesAndProbs(state,a):
+                reward = probs[index][1](self.mdp.getReward(state,a,probs[index][0])+self.discount*self.values[probs[index][0]])
+                V += reward
+            actions[a]=V
+        return actions.argMax()
+
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
