@@ -55,11 +55,11 @@ class ValueIterationAgent(ValueEstimationAgent):
 
 
 
+
     def valueIterationHelper(self,state,completedIterations):
         if completedIterations == self.iterations or self.mdp.isTerminal(state):
             return 0
         max = None
-        print(self.mdp.getPossibleActions(state))
         for a in self.mdp.getPossibleActions(state):
             probs = self.mdp.getTransitionStatesAndProbs(state,a)
             V=0
@@ -108,8 +108,10 @@ class ValueIterationAgent(ValueEstimationAgent):
         actions = util.Counter()
         for a in self.mdp.getPossibleActions(state):
             V = 0
-            for index in self.mdp.getTransitionStatesAndProbs(state,a):
-                reward = probs[index][1](self.mdp.getReward(state,a,probs[index][0])+self.discount*self.values[probs[index][0]])
+            probs = self.mdp.getTransitionStatesAndProbs(state,a)
+            for index in range(len(probs)):
+                print(index)
+                reward = probs[index][1]*(self.mdp.getReward(state,a,probs[index][0])+self.discount*self.values[probs[index][0]])
                 V += reward
             actions[a]=V
         return actions.argMax()
