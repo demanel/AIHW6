@@ -122,7 +122,7 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         if len(legalActions) < 1:
             return None
-        if util.flipCoin(self.epsilon):
+        if util.flipCoin(1-self.epsilon):
             return self.computeActionFromQValues(state)
         else:
             return random.choice(legalActions)
@@ -182,7 +182,7 @@ class PacmanQAgent(QLearningAgent):
     the values.
     """
     "*** YOUR CODE HERE ***"
-    def __init__(self, epsilon=0.0,gamma=0.8,alpha=0.0, numTraining=0, **args):
+    def __init__(self, epsilon=0,gamma=0.8,alpha=0.25, numTraining=0, **args):
         """
         These default parameters can be changed from the pacman.py command line.
         For example, to change the exploration rate, try:
