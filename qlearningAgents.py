@@ -54,6 +54,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         key = str(state) + str(action)
+        key = str(key)
         return self.Qvals[key]
 
 
@@ -80,6 +81,7 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         for action in self.getLegalActions(state):
             key = str(state) + str(action)
+            key = str(key)
             value = self.Qvals[key]
             if value == self.Vvals[state]:
                 return action
@@ -106,6 +108,7 @@ class QLearningAgent(ReinforcementAgent):
         best_actions = []
         for action in legalActions:
             key = str(state) + str(action)
+            key = str(key)
             if self.Qvals[key] == self.Vvals[key]:
                 best_actions.append(action)
         move = random.choice(best_actions)
@@ -129,17 +132,18 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        sample = reward + self.Vvals[nextState]
+        # Calculate sample reward from existing reward and current V-val of next state
+        nextStateKey = str(nextState)
+        sample = reward + self.Vvals[nextStateKey]
         key = str(state) + str(action)
-        if key in self.Qvals.keys():
-            newQ = self.Qvals[key] * (1-self.discount) + sample*self.discount
-            self.Qvals[key] = newQ
-            if newQ > self.Vvals[state]:
-                self.Vvals = newQ
-        else:
-            self.Qvals[key] = sample
-            if sample > self.Vvals[state]:
-                self.Vvals[state] = newQ
+        key = str(key)
+        newQ = self.Qvals[key] * (1-self.discount) + sample*self.discount
+        self.Qvals[key] = newQ
+        print("Key:   ", key)
+        print("value:   ", self.Qvals[key])
+        stateKey = str(state)
+        if newQ > self.Vvals[stateKey]:
+            self.Vvals[stateKey] = newQ
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
