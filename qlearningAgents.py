@@ -95,8 +95,14 @@ class QLearningAgent(ReinforcementAgent):
             key = str(key)
             value = self.Qvals[key]
             if value > max or max == None:
-                bestActions.append(action)
                 max = value
+        for action in self.getLegalActions(state):
+            key = str(state) + str(action)
+            key = str(key)
+            value = self.Qvals[key]
+            if value == max:
+                bestActions.append(action)
+        #TODO: UGLY CODE, MAKE BETTER
         bestAction = random.choice(bestActions)
         return bestAction
 
@@ -116,6 +122,11 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         if len(legalActions) < 1:
             return None
+        if util.flipCoin(self.epsilon):
+            return self.computeActionFromQValues(state)
+        else:
+            return random.choice(legalActions)
+        '''
         best_actions = []
         action = None
         self.Vvals[key] = self.computeValueFromQValues(state)
@@ -130,8 +141,8 @@ class QLearningAgent(ReinforcementAgent):
             return action
         else:
             action = random.choice(legalActions)
-            #check with Anna: if multiple best actions, what group is randomly selected from?
             return action
+        '''
 
     def update(self, state, action, nextState, reward):
         """
