@@ -67,9 +67,16 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
-        #WHAT DO WE WANT TO RETURN???
-        return self.Vvals[state]
-    #REDO THIS: WILL BERTANT LATER???
+        if len(self.getLegalActions(state)) == 0:
+            return 0.0
+        max = -1*float('inf')
+        for action in self.getLegalActions(state):
+            qkey = str(state) + str(action)
+            qkey = str(qkey)
+            if self.Qvals[qkey] > max:
+                max = self.Qvals[qkey]
+        #print("Type:  ",type(max))
+        return max
 
 
     def computeActionFromQValues(self, state):
@@ -79,14 +86,19 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
+        if len(self.getLegalActions(state)) == 0:
+            return None
+        max = float('inf')*-1
+        bestActions = []
         for action in self.getLegalActions(state):
             key = str(state) + str(action)
             key = str(key)
             value = self.Qvals[key]
-            if value == self.Vvals[state]:
-                return action
-        return None
-        util.raiseNotDefined()
+            if value > max or max == None:
+                bestActions.append(action)
+                max = value
+        bestAction = random.choice(bestActions)
+        return bestAction
 
     def getAction(self, state):
         """
@@ -101,11 +113,12 @@ class QLearningAgent(ReinforcementAgent):
         """
         # Pick Action
         legalActions = self.getLegalActions(state)
-        action = None
         "*** YOUR CODE HERE ***"
         if len(legalActions) < 1:
             return None
         best_actions = []
+        action = None
+        self.Vvals[key] = self.computeValueFromQValues(state)
         for action in legalActions:
             key = str(state) + str(action)
             key = str(key)
@@ -118,8 +131,6 @@ class QLearningAgent(ReinforcementAgent):
         else:
             action = random.choice(legalActions)
             #check with Anna: if multiple best actions, what group is randomly selected from?
-            while action == move:
-                action = random.choice(legalActions)
             return action
 
     def update(self, state, action, nextState, reward):
@@ -132,18 +143,15 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        # Calculate sample reward from existing reward and current V-val of next state
         nextStateKey = str(nextState)
-        sample = reward + self.Vvals[nextStateKey]
+        # Calculate sample reward from existing reward and current V-val of next state
+        sample = reward + self.discount*self.Vvals[nextStateKey]
         key = str(state) + str(action)
         key = str(key)
-        newQ = self.Qvals[key] * (1-self.discount) + sample*self.discount
+        newQ = self.Qvals[key] * (1-self.alpha) + sample*self.alpha
         self.Qvals[key] = newQ
-        print("Key:   ", key)
-        print("value:   ", self.Qvals[key])
         stateKey = str(state)
-        if newQ > self.Vvals[stateKey]:
-            self.Vvals[stateKey] = newQ
+        self.Vvals[stateKey] = self.computeValueFromQValues(state)
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
