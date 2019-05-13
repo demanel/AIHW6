@@ -54,7 +54,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         key = str(state) + str(action)
-        return self.Qvals(key)
+        return self.Qvals[key]
 
 
 
@@ -67,7 +67,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         #WHAT DO WE WANT TO RETURN???
-        return self.Vvals(state)
+        return self.Vvals[state]
     #REDO THIS: WILL BERTANT LATER???
 
 
@@ -80,8 +80,8 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         for action in self.getLegalActions(state):
             key = str(state) + str(action)
-            value = self.Qvals(key)
-            if value == self.Vvals(state):
+            value = self.Qvals[key]
+            if value == self.Vvals[state]:
                 return action
         return None
         util.raiseNotDefined()
@@ -106,7 +106,7 @@ class QLearningAgent(ReinforcementAgent):
         best_actions = []
         for action in legalActions:
             key = str(state) + str(action)
-            if self.Qvals(key) == self.Vvals(key):
+            if self.Qvals[key] == self.Vvals[key]:
                 best_actions.append(action)
         move = random.choice(best_actions)
         if util.flipCoin(self.epsilon):
@@ -129,7 +129,7 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        sample = reward + self.Vvals(nextState)
+        sample = reward + self.Vvals[nextState]
         key = str(state) + str(action)
         if key in self.Qvals.keys():
             newQ = self.Qvals[key] * (1-self.discount) + sample*self.discount
@@ -138,7 +138,7 @@ class QLearningAgent(ReinforcementAgent):
                 self.Vvals = newQ
         else:
             self.Qvals[key] = sample
-            if sample > self.Vvals(state):
+            if sample > self.Vvals[state]:
                 self.Vvals[state] = newQ
 
     def getPolicy(self, state):
