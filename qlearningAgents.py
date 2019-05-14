@@ -240,6 +240,25 @@ class ApproximateQAgent(PacmanQAgent):
            Should update your weights based on transition
         """
         "*** YOUR CODE HERE ***"
+        features = self.featExtractor.getFeatures(state, action)
+        qVal = 0.0
+        for feature, key in features:
+            qVal += feature * self.weights[key]
+        for feature in features:
+            weight = self.weights[feature]
+            
+            difference = self.Vvals[str(nextState)] * self.discount + reward - qVal
+            
+            
+
+        nextStateKey = str(nextState)
+        # Calculate sample reward from existing reward and current V-val of next state
+        sample = reward + self.discount*self.Vvals[nextStateKey]
+        newQ = self.Qvals[key] * (1-self.alpha) + sample*self.alpha
+        self.Qvals[key] = newQ
+        stateKey = str(state)
+        self.Vvals[stateKey] = self.computeValueFromQValues(state)
+
         util.raiseNotDefined()
 
     def final(self, state):
