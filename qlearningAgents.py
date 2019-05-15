@@ -233,7 +233,15 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        qVal = 0.0
+        features = self.featExtractor.getFeatures(state, action)
+        #todo: error here bc too many values?
+        #todo error features return number tuple (0,0)???
+        for key in features:
+            feature = features[key]
+            print("feature:  ", feature)
+            qVal += feature * self.weights[key]
+        return qVal
 
     def update(self, state, action, nextState, reward):
         """
@@ -241,16 +249,25 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         features = self.featExtractor.getFeatures(state, action)
+        '''
         qVal = 0.0
         for feature, key in features:
-            qVal += feature * self.weights[key]
+            print("feature:  ", feature)
+            print("key:  ", key)
+            qVal += feature * self.weights[feature] * key
+            '''
+        vVal = float('inf')*-1
+        for act in self.getLegalActions(state):
+            q = self.getQValue(state, act)
+            if q > vVal:
+                vVal = q
+        qVal = self.getQValue(state, action)
         for feature in features:
             weight = self.weights[feature]
-            
             difference = self.Vvals[str(nextState)] * self.discount + reward - qVal
-            
-            
-
+            self.weights[feature] = self.weights[feature] + self.alpha*difference*features[feature]
+        #need to calculate V values :/
+        '''
         nextStateKey = str(nextState)
         # Calculate sample reward from existing reward and current V-val of next state
         sample = reward + self.discount*self.Vvals[nextStateKey]
@@ -260,6 +277,7 @@ class ApproximateQAgent(PacmanQAgent):
         self.Vvals[stateKey] = self.computeValueFromQValues(state)
 
         util.raiseNotDefined()
+        '''
 
     def final(self, state):
         "Called at the end of each game."
