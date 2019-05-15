@@ -239,7 +239,6 @@ class ApproximateQAgent(PacmanQAgent):
         #todo error features return number tuple (0,0)???
         for key in features:
             feature = features[key]
-            print("feature:  ", feature)
             qVal += feature * self.weights[key]
         return qVal
 
@@ -249,18 +248,12 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         features = self.featExtractor.getFeatures(state, action)
-        '''
-        qVal = 0.0
-        for feature, key in features:
-            print("feature:  ", feature)
-            print("key:  ", key)
-            qVal += feature * self.weights[feature] * key
-            '''
         vVal = float('inf')*-1
         for act in self.getLegalActions(state):
             q = self.getQValue(state, act)
             if q > vVal:
                 vVal = q
+        self.Vvals[str(nextState)] = vVal
         qVal = self.getQValue(state, action)
         for feature in features:
             weight = self.weights[feature]
