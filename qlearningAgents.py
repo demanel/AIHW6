@@ -235,8 +235,6 @@ class ApproximateQAgent(PacmanQAgent):
         "*** YOUR CODE HERE ***"
         qVal = 0.0
         features = self.featExtractor.getFeatures(state, action)
-        #todo: error here bc too many values?
-        #todo error features return number tuple (0,0)???
         for key in features:
             feature = features[key]
             qVal += feature * self.weights[key]
@@ -259,18 +257,6 @@ class ApproximateQAgent(PacmanQAgent):
             weight = self.weights[feature]
             difference = self.Vvals[str(nextState)] * self.discount + reward - qVal
             self.weights[feature] = self.weights[feature] + self.alpha*difference*features[feature]
-        #need to calculate V values :/
-        '''
-        nextStateKey = str(nextState)
-        # Calculate sample reward from existing reward and current V-val of next state
-        sample = reward + self.discount*self.Vvals[nextStateKey]
-        newQ = self.Qvals[key] * (1-self.alpha) + sample*self.alpha
-        self.Qvals[key] = newQ
-        stateKey = str(state)
-        self.Vvals[stateKey] = self.computeValueFromQValues(state)
-
-        util.raiseNotDefined()
-        '''
 
     def final(self, state):
         "Called at the end of each game."
